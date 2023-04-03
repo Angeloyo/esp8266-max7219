@@ -1,8 +1,7 @@
-
+//original code from https://techlogics.net/esp8266-clock-with-max7219-matrix-display-date-time-display/
 
 #include "Arduino.h"
 #include <ESP8266WiFi.h>
-
 
 WiFiClient client;
 
@@ -13,9 +12,9 @@ String date;
 #define ROTATE  90
 
 // for NodeMCU 1.0
-#define DIN_PIN 15  // D8
-#define CS_PIN  13  // D7
-#define CLK_PIN 12  // D6
+#define DIN_PIN D7  
+#define CS_PIN  D8  
+#define CLK_PIN D5  
 
 #include "max7219.h"
 #include "fonts.h"
@@ -23,14 +22,14 @@ String date;
 // =======================================================================
 // CHANGE YOUR CONFIG HERE:
 // =======================================================================
-const char* ssid     = "TECHLOGICS_7598111110";     // SSID of local network
-const char* password = "9487100100";   // Password on network
-float utcOffset = 5.5; // Time Zone setting
+const char* ssid     = "ssid";     // SSID of local network
+const char* password = "password";   // Password on network
+float utcOffset = 2; // Time Zone setting
 // =======================================================================
 
 void setup() 
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   initMAX7219();
   sendCmdAll(CMD_SHUTDOWN,1);
  // sendCmdAll(CMD_INTENSITY,10); // Adjust the brightness between 0 and 15
@@ -65,19 +64,19 @@ long localMillisAtUpdate = 0;
 // =======================================================================
 void loop()
 {
-  if(updCnt<=0) { // every 10 scrolls, ~450s=7.5m
-    updCnt = 10;
+  if(updCnt<=0) { 
+    updCnt = 20;
     Serial.println("Getting data ...");
-    printStringWithShift("  Getting data",15);
+    //printStringWithShift("  Getting data",15);
    
     getTime();
     Serial.println("Data loaded");
     clkTime = millis();
   }
  
-  if(millis()-clkTime > 20000 && !del && dots) { // clock for 15s, then scrolls for about 30s
+  if(millis()-clkTime > 20000 && !del && dots) {
     printStringWithShift(date.c_str(),40);
-   delay(7000);
+   delay(2000);
     updCnt--;
     clkTime = millis();
   }
